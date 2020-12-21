@@ -1,0 +1,45 @@
+#!/bin/bash
+
+cmd="pip ${@}"
+cachepath="$HOME/Library/cache/Python"
+pyV=$(python --version)
+pyversion=$(echo ${pyV:6})
+cachedirVersion="$cachepath/$pyversion"
+filename="$(date +%Y%m%d-%H%M%S).txt"
+
+function mkcache () {
+	echo "cache file >> $cachedirVersion/$filename"
+	pip freeze > "$cachedirVersion/$filename"
+}
+
+function recover () {
+	echo "recover from cache file"
+}
+
+function cache-list () {
+	echo "========CACHE_LIST:VERSION $pyversion========"
+	ls $cachedirVersion
+}
+
+if [ -d "$cachedirVersion" ] ; then
+	echo "cache directory >> $cachedirVersion"
+else
+	mkdir -p $cachepath
+fi
+
+case $1 in
+	"mkcache")
+		mkcache
+		;;
+	"recover")
+		recover
+		;;
+	"cache-list")
+		cache-list
+		;;
+	*)
+		eval $cmd
+		;;
+esac
+
+
